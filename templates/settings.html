@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedImage = localStorage.getItem("profilePic");
+            if (savedImage) {
+                document.getElementById("profileImage").src = savedImage;
+            }
+        });
+
+        function enableEditing() {
+            document.querySelectorAll("input, select, textarea").forEach(el => el.removeAttribute("disabled"));
+            document.getElementById("saveButton").classList.remove("hidden");
+            document.getElementById("cancelButton").classList.remove("hidden");
+        }
+
+        function saveDetails() {
+            alert("User details updated successfully!");
+            cancelEditing();
+        }
+
+        function cancelEditing() {
+            document.querySelectorAll("input, select, textarea").forEach(el => el.setAttribute("disabled", "true"));
+            document.getElementById("saveButton").classList.add("hidden");
+            document.getElementById("cancelButton").classList.add("hidden");
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("profileImage").src = e.target.result;
+                    localStorage.setItem("profilePic", e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleChangePassword() {
+            document.getElementById("passwordFields").classList.toggle("hidden");
+        }
+
+        function changePassword() {
+            const prevPassword = document.getElementById("prevPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("New Password and Confirm Password do not match.");
+                return;
+            }
+
+            alert("Password updated successfully!");
+            document.getElementById("passwordFields").classList.add("hidden");
+        }
+    </script>
+</head>
+<body class="bg-blue-100 flex justify-center items-center min-h-screen text-gray-900">
+    <div class="w-full max-w-3xl bg-white p-8 rounded-lg shadow-xl border border-gray-300">
+    <!-- Profile Header -->
+    <div class="flex items-center justify-between pb-4 border-b border-gray-700">
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <label for="profilePic" class="cursor-pointer">
+                    <img src="{{ url_for('static', filename='user.png') }}" id="profileImage" alt="Profile Picture"
+                        class="w-20 h-20 rounded-full border-4 border-gray-600">
+                </label>
+                <input type="file" id="profilePic" class="hidden" accept="image/*" onchange="previewImage(event)">
+
+                <!-- Profile Menu (Hidden by default) -->
+                <div id="profileMenu" class="absolute top-full left-0 bg-gray-800 text-white rounded-md shadow-lg w-40 hidden">
+                    <button onclick="document.getElementById('profilePic').click()"
+                        class="block w-full text-left px-4 py-2 hover:bg-gray-700">Upload Image</button>
+                    <button onclick="removeImage()" class="block w-full text-left px-4 py-2 hover:bg-gray-700">Remove Image</button>
+                    <button onclick="openCamera()" class="block w-full text-left px-4 py-2 hover:bg-gray-700">Capture Image</button>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-2xl font-semibold">vvitu</h2>
+                <p class="text-gray-400">vvitu@gmail.com</p>
+            </div>
+        </div>
+        <button onclick="enableEditing()" class="bg-blue-500 hover:bg-blue-600 transition px-5 py-2 rounded-lg shadow-md">Edit</button>
+    </div>
+
+    <!-- Camera Capture Modal -->
+    <div id="cameraModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
+            <video id="cameraFeed" autoplay class="w-64 h-48"></video>
+            <div class="mt-4 flex justify-between">
+                <button onclick="captureImage()" class="bg-green-500 px-4 py-2 rounded-lg">Capture</button>
+                <button onclick="closeCamera()" class="bg-red-500 px-4 py-2 rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.getElementById("profileImage").addEventListener("click", function () {
+            document.getElementById("profileMenu").classList.toggle("hidden");
+        });
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("profileImage").src = e.target.result;
+                    localStorage.setItem("profilePic", e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            document.getElementById("profileImage").src = "{{ url_for('static', filename='user.png') }}";
+            localStorage.removeItem("profilePic");
+            document.getElementById("profileMenu").classList.add("hidden");
+        }
+
+        function openCamera() {
+            document.getElementById("cameraModal").classList.remove("hidden");
+            const video = document.getElementById("cameraFeed");
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .catch((err) => console.error("Error accessing camera:", err));
+            document.getElementById("profileMenu").classList.add("hidden");
+        }
+
+        function captureImage() {
+            const video = document.getElementById("cameraFeed");
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageUrl = canvas.toDataURL("image/png");
+            document.getElementById("profileImage").src = imageUrl;
+            localStorage.setItem("profilePic", imageUrl);
+            closeCamera();
+        }
+
+        function closeCamera() {
+            const video = document.getElementById("cameraFeed");
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            document.getElementById("cameraModal").classList.add("hidden");
+        }
+    </script>
+
+
+    <script>
+        function removeProfileImage() {
+            document.getElementById("profileImage").src = "{{ url_for('static', filename='user.png') }}"; // Reset to default image
+            localStorage.removeItem("profilePic"); // Remove saved image from localStorage
+        }
+    </script>
+
+    <!-- Profile Details -->
+    <div class="mt-6 grid grid-cols-2 gap-6">
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Full Name</label>
+            <input id="fullName" type="text" placeholder="Your Full Name" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Last Name</label>
+            <input id="lastName" type="text" placeholder="Your Last Name" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Date of Birth</label>
+            <input id="dob" type="date" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Phone Number</label>
+            <input id="phone" type="text" placeholder="Your Phone Number" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Email Address</label>
+            <input id="email" type="email" placeholder="Your Email Address" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div class="col-span-2">
+            <label class="text-sm font-semibold text-gray-700">Address</label>
+            <input id="address" type="text" placeholder="Your Address" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+        </div>
+        <div class="col-span-2">
+            <label class="text-sm font-semibold text-gray-700">Bio</label>
+            <textarea id="bio" placeholder="Write about yourself..." class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled></textarea>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Gender</label>
+            <select id="gender" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+                <option>Choose Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div>
+            <label class="text-sm font-semibold text-gray-700">Country</label>
+            <select id="country" class="w-full p-3 bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" disabled>
+                <option>Select Country</option>
+                <option>India</option>
+                <option>USA</option>
+                <option>UK</option>
+            </select>
+        </div>
+    </div>
+
+
+        <!-- Change Password Section -->
+    <div class="mt-8">
+        <button onclick="toggleChangePassword()" class="bg-red-500 hover:bg-red-600 text-white font-medium transition px-5 py-2 rounded-lg shadow-md">Change Password</button>
+    </div>
+
+    <!-- Password Fields (Initially Hidden) -->
+    <div id="passwordFields" class="hidden mt-4 p-6 bg-gray-100 rounded-lg shadow-lg border border-gray-100">
+        <div class="mb-3">
+            <label class="text-sm font-medium text-gray-700">Old Password</label>
+            <input type="password" id="prevPassword" 
+                class="w-full p-3 bg-white border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+        </div>
+        <div class="mb-3">
+            <label class="text-sm font-medium text-gray-700">New Password</label>
+            <input type="password" id="newPassword" 
+                class="w-full p-3 bg-white border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+        </div>
+        <div class="mb-3">
+            <label class="text-sm font-medium text-gray-700">Confirm New Password</label>
+            <input type="password" id="confirmPassword" 
+                class="w-full p-3 bg-white border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+        </div>
+        <button onclick="changePassword()" class="bg-green-500 hover:bg-green-600 text-white font-medium transition px-5 py-2 rounded-lg shadow-md">Change</button>
+    </div>
+
+    <!-- Save & Cancel Buttons -->
+    <div class="mt-6 flex space-x-4">
+        <button id="saveButton" onclick="saveDetails()" class="hidden bg-green-500 hover:bg-green-600 text-white font-medium px-5 py-2 rounded-lg shadow-md">Save</button>
+        <button id="cancelButton" onclick="cancelEditing()" class="hidden bg-gray-500 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg shadow-md">Cancel</button>
+    </div>
+
+</body>
+</html>

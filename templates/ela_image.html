@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Sidebar Menu</title>
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+</head>
+<style>
+/* CSS Variables */
+*{
+  /*for fixed no scrolling*/
+  overflow: hidden;
+  overflow-y: auto;
+  
+}
+:root {
+  --sidebar-width: 280px;
+  --sidebar-bg: #f9f9fb;
+  --primary-color: #6366f1;
+  --text-dark: #111827;
+  --text-medium: #374151;
+  --text-light: #6b7280;
+  --hover-bg: #ececf0;
+  --transition: all 0.3s ease;
+}
+
+/* Base Styles */
+body {
+  letter-spacing: 0.05rem;
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar - Base Structure */
+.sidebar {
+  
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #eaeaea;
+  padding: 0.5rem;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  transition: var(--transition);
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #f5f4f7;
+  border-radius: 3px;
+}
+
+/* User Info Section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#profile-picture {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profile-name {
+  color: var(--text-dark);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* Menu Items Common Styles */
+.menu-header,
+.menu-item,
+.logout-button {
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.menu-header {
+  margin: 10px;
+  font-size: 1.35rem;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+  justify-content: flex-start;
+}
+
+.menu-item {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-medium);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin: 5px 0 5px 12px;
+  text-decoration: none;
+}
+/* Welcome Text */
+#welcomeText {
+    color: #111827;  /* Default text color */
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Material Icon Color Change */
+.menu-item.active .material-icons {
+    color: #6366f1;  /* Primary color */
+}
+
+/* Profile Name */
+.profile-name {
+    font-weight: 600;
+    color: #111827;  /* Default text color */
+}
+
+.menu-item .material-icons {
+  font-size: 1.6rem;
+  margin-right: 12px;
+  color: #191a1b;
+}
+
+/* Interactive States */
+.menu-item:hover,
+.logout-button:hover {
+  background-color: var(--hover-bg);
+}
+
+.menu-item.active {
+  background-color: var(--hover-bg);
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+/* .menu-item.active .material-icons {
+  color: #9ca3af;
+} */
+
+
+.section-title {
+  color: var(--text-light);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+  padding: 0.5rem 1rem;
+  
+}
+
+/* Logout Button */
+.logout-button {
+  justify-content: center;
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  margin: 35px 0 0 0.5rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.logout-button .material-icons {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+/* Collapsed State */
+.sidebar.collapsed {
+  width: 64px;
+}
+
+/*.sidebar.collapsed .user-info,
+.sidebar.collapsed .sidebar-menu,
+.sidebar.collapsed .logout-button,
+.sidebar.collapsed .section-title {
+  display: none;
+}*/
+
+.sidebar.collapsed .menu-header {
+  justify-content: center;
+  margin: 0;
+}
+
+.sidebar.collapsed .menu-header .material-icons {
+  margin-right: 0;
+  transform: rotate(180deg);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.main-content h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.main-content p {
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+
+
+/*optimized  1*/
+
+.sidebar {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-content {
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root {
+  --collapsed-width: 80px;
+  --expanded-width: 280px;
+}
+
+.sidebar { width: var(--expanded-width); }
+.sidebar.collapsed { width: var(--collapsed-width); }
+
+.main-content { margin-left: var(--expanded-width); }
+.sidebar.collapsed ~ .main-content { margin-left: var(--collapsed-width); }
+
+/*update 2 */
+/* Hide text in user info but keep the profile picture */
+.sidebar.collapsed .user-info div {
+  display: none;
+}
+
+/* In each menu item, hide everything except the icon*/ 
+.sidebar.collapsed .menu-item span:not(.material-icons) {
+  display: none;
+}
+
+
+/* For the logout button, hide the text and show only the icon */
+.sidebar.collapsed .logout-button span:not(.material-icons) {
+  display: none;
+}
+
+/* Optionally, hide section titles in collapsed mode */
+.sidebar.collapsed .section-title {
+  display: none;
+}
+
+
+/*updated 3 integration*/
+
+.header {
+ 
+  padding: 1rem 2rem;
+  position: relative;
+  z-index: 40;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Main content adjustment */
+.main-content {
+  position: relative;
+  /*margin-left: var(--sidebar-width);*/
+  margin: 0;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Header positioning */
+.main-content .header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+}
+
+/* Collapsed state */
+.sidebar.collapsed ~ .main-content {
+  /*margin-left: var(--collapsed-width);*/
+  margin: 0;
+}
+
+/* Logo styling */
+.logo h1 {
+  color: rgb(0, 0, 0);
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.logo h1::before {
+  
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Zero-gap integration */
+.container1{
+  overflow: hidden;
+}
+
+.sidebar {
+  z-index: 50;
+}
+
+.header {
+  z-index: 40;
+}
+
+
+
+
+/*updated 4 upload and main */
+
+
+:root {
+  --primary: #4e73df;
+  --secondary: #1cc88a;
+  --error: #e74a3b;
+  --background: #ffffff;
+  --surface: #f8f9fc;
+  --border: #d1d3e2;
+  --text-primary: #343a40;
+  --text-secondary: #6c757d;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  --sidebar-gradient: linear-gradient(135deg, #4e73df, #1cc88a);
+}
+
+ /* Global Styles */
+
+
+
+.container2{
+  max-width: 1500px;
+  margin: 20px auto;
+  padding: 2rem 1.5rem;
+}
+
+    /* Content Area */
+    .content {
+      width: 100%;
+    }
+    .dashboard {
+      display: grid;
+      <!-- grid-template-columns: 1fr 1fr; -->
+      gap: 2rem;
+      background: var(--background);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .dashboard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--sidebar-gradient);
+    }
+
+    /* Upload Section */
+    .upload-section {
+      padding: 1.5rem;
+    }
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background: var(--background);
+      margin: 1.5rem 0;
+    }
+    .drop-zone:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+    .preview-container {
+      margin: 1.5rem 0;
+      border-radius: 1rem;
+      overflow: hidden;
+      position: relative;
+      min-height: 200px;
+      background: var(--surface);
+      gap:0.5rem;
+    }
+    #imagePreview {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      display: none;
+    }
+    .file-info {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 2rem 0;
+    }
+    button {
+      background: var(--sidebar-gradient);
+      color: #fff;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;  /* Centers buttons horizontally */
+      gap: 10px;  /* Adds space between buttons */
+      margin-top: 1rem;
+  }
+  
+  .custom-btn {
+      width: 150px; /* Set button width */
+      padding: 8px 12px; /* Adjust padding for better appearance */
+      font-size: 14px; /* Reduce font size for a compact look */
+      border: none;
+      border-radius: 5px; /* Rounded corners */
+      background-color: #007bff; /* Blue color */
+      color: white; /* White text */
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+  }
+  
+  .custom-btn:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  </style>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar-container">
+      <aside class="sidebar">
+        <a href="#" class="menu-header menu-item">
+          <span class="material-icons">chevron_left</span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- User Info -->
+        <div class="user-info menu-item">
+          <img src="{{ url_for('static', filename='user.png') }}" alt="User Avatar" id="profile-picture">      
+          <div>
+            <p class="profile-name">{{ current_user.username }}</p> 
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="sidebar-menu">
+          <a href="{{ url_for('settings') }}" class="menu-item">
+            <span class="material-icons">tune</span>
+            <span>Personal Settings</span>
+          </a>
+          <a href="{{ url_for('ela_image') }}" class="menu-item">
+            <span class="material-icons">upload</span>
+            <span>ELA Image</span>
+          </a>
+          <a href="{{ url_for('dashboard') }}" class="menu-item">
+            <span class="material-icons">dashboard</span>
+            <span>Analysis</span>
+          </a>
+          <a href="{{ url_for('reports_history') }}" class="menu-item">
+            <span class="material-icons">history</span>
+            <span>Reports History</span>
+          </a>
+          <a href="{{ url_for('about') }}" class="menu-item">
+            <span class="material-icons">info</span>
+            <span>About</span>
+          </a>
+        </nav>
+
+        <!-- Logout Link -->
+        <a href="{{ url_for('logout') }}" class="logout-button">
+          <span class="material-icons">logout</span>
+          <span>Logout</span>
+        </a>
+      </aside>
+    </div>
+
+    <!-- Main Content Placeholder -->
+    <main class="main-content">
+      <div class="container1">
+        <!-- Header -->
+        <header class="header">
+          <div class="logo">
+            <h1 id="welcomeText">Hey, {{ current_user.username }}!</h1>
+          </div>
+        </header>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="container2">
+        <section class="content">
+          <div class="dashboard">
+            <!-- Upload Section -->
+            <div class="upload-section">
+              <div class="drop-zone" id="dropZone">
+                <div style="margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600;">Drag & Drop Image</div>
+                <div class="file-info">Max file size: 25MB • Formats: JPEG, PNG, WEBP</div>
+              </div>
+              <input type="file" id="fileInput" hidden accept="image/*">
+              
+              <!-- Image Preview Container -->
+              <div class="preview-container" style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
+                  <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;"></div>
+                  <img id="imagePreview" alt="Image preview" style="width: 100%; max-width: 300px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;"></div>
+                  <img id="elaImagePreview" alt="ELA Image preview" style="width: 100%; max-width: 300px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); display: none;">
+                </div>
+              </div>
+
+              <div id="successMessage" class="success-message"></div>
+  
+              <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Forgery Analysis in Progress...</div>
+              </div>
+              <div class="button-container">
+                <button onclick="generateELA()" id="analyzeBtn" class="custom-btn">
+                    Generate ELA Image
+                </button>
+                <button onclick="clearImageAndAnalysis()" id="clearBtn" class="custom-btn">
+                    Clear Image & Analysis
+                </button>
+            </div>       
+            </div>        
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Function to handle image upload and preview
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const elaImagePreview = document.getElementById('elaImagePreview');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = '#6366f1';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = '#d1d3e2';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = '#d1d3e2';
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        fileInput.files = e.dataTransfer.files;
+        previewImage(file);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        previewImage(file);
+      }
+    });
+
+    function previewImage(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Function to generate ELA image
+    function generateELA() {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files[0]) {
+        alert('Please upload an image first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      fetch('/generate_ela', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Display the ELA image
+          elaImagePreview.src = data.ela_image_url;
+          elaImagePreview.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while generating the ELA image.');
+        });
+    }
+
+    // Function to clear the image and ELA image
+    function clearImageAndAnalysis() {
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+      elaImagePreview.src = '';
+      elaImagePreview.style.display = 'none';
+      fileInput.value = '';
+    }
+  </script>
+</body>
+</html>

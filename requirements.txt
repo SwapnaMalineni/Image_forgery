@@ -1,0 +1,15 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+python-telegram-bot
+requests
+apscheduler
+pytz
+Pillow
+numpy
+matplotlib
+opencv-python-headless
+tensorflow
+gunicorn
+alembic
+SQLAlchemy

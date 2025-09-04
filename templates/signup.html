@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign up for Image Forgery Detection System">
+    <title>Sign Up - Image Forgery Detection System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Add Font Awesome for eye icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* Add the CSS from index.html here */
+        :root {
+            --primary-color: rgba(91, 134, 229, 1);
+            --secondary-color: rgba(171, 193, 242, 1);
+            --text-color: #333;
+            --white: #ffffff;
+            --gray: #777676;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PP Telegraf', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--secondary-color);
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        .header {
+            background-color: var(--white);
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Aboreto', serif;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .login-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Existing signup.html styles */
+        .signup-container {
+            width: 100%;
+            height: calc(100vh - 80px); /* Adjust for header height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 5%; /* Reduced padding */
+        }
+
+        .content-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            padding: 1rem; /* Reduced padding */
+            justify-content: center;
+            align-items: center; /* Center the image */
+        }
+
+        .branding-container {
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the content */
+        }
+
+        .brand-title {
+            font-size: 32px; /* Reduced font size */
+            line-height: 1.2;
+            letter-spacing: 2.4px;
+            color: #000000;
+            margin-top: 0;
+            font-weight: 700;
+            text-align: center; /* Center the text */
+        }
+
+        .brand-image {
+            width: 100%;
+            max-width: 700px; /* Reduced image size */
+            height: auto;
+            margin-top: 1rem; /* Reduced margin */
+            object-fit: contain;
+        }
+
+        .right-column {
+            width: 50%;
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            padding: 1.5rem; /* Reduced padding */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signup-form {
+            width: 100%;
+            max-width: 500px; /* Reduced form width */
+            padding: 0 0rem;
+        }
+
+        
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+          }
+
+        .form-group {
+            margin-bottom: 1rem; /* Reduced margin between form groups */
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-color); /* Match index.html text color */
+            margin-bottom: 0.25rem; /* Reduced margin */
+            font-size: 14px; /* Match index.html font size */
+            line-height: 1.5;
+            font-weight: 500; /* Match index.html font weight */
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0 0; /* Reduced padding */
+            border: none;
+            border-bottom: 1px solid #9D9D9D;
+            font-size: 14px; /* Reduced font size */
+            background: transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-bottom: 2px solid rgba(91, 134, 229, 1);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 0.75rem; /* Reduced padding */
+            background-color: rgba(91, 134, 229, 1);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 14px; /* Reduced font size */
+            cursor: pointer;
+            margin-top: 1.5rem; /* Reduced margin */
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover,
+        .submit-button:focus {
+            background-color: rgba(71, 114, 209, 1);
+        }
+
+        .login-link {
+            text-align: center;
+            margin: 1rem 0; /* Reduced margin */
+            color: #000000;
+            font-weight: 500;
+            font-size: 16px; /* Reduced font size */
+        }
+
+        .login-text-bold {
+            color: rgba(91, 134, 229, 1);
+            font-weight: 800;
+            text-decoration: none;
+            margin-left: 0.5rem;
+        }
+
+        .login-text-bold:hover,
+        .login-text-bold:focus {
+            text-decoration: underline;
+        }
+
+        .social-signup {
+            display: flex;
+            gap: 20px;
+            margin-top: 1rem; /* Reduced margin */
+        }
+
+        .social-button {
+            flex: 1;
+            padding: 0.5rem; /* Reduced padding */
+            border: 1px solid rgba(91, 134, 229, 1);
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            color: #000000;
+            font-size: 12px; /* Reduced font size */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .social-button:hover,
+        .social-button:focus {
+            background-color: rgba(91, 134, 229, 0.1);
+        }
+
+        @media (max-width: 991px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .left-column,
+            .right-column {
+                width: 100%;
+            }
+
+            .right-column {
+                border-radius: 40px 40px 0 0;
+                padding: 1.5rem 1rem; /* Adjusted padding */
+            }
+
+            .brand-image {
+                margin-top: 1rem;
+            }
+
+            .social-signup {
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .submit-button,
+            .social-button,
+            .form-input {
+                transition: none;
+            }
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px; /* Reduced font size */
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-input:invalid:not(:focus):not(:placeholder-shown) + .error-message {
+            display: block;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section from index.html -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo" class="logo-icon">
+                <!-- <span>Image Forgery Detection System</span> -->
+                <span style="font-size: 1.8rem; font-weight: bold; color: #5b86e5;">Image Authentix</span>
+      
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{url_for('home')}}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="{{url_for('login')}}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="signup-container">
+        <div class="content-wrapper">
+            <div class="left-column">
+                <div class="branding-container">
+                        <img src="{{url_for('static',filename='avatar2.svg')}}" 
+                         alt="Image Forgery Detection System Illustration" 
+                         class="brand-image"
+                         width="500"
+                         height="500"
+                         loading="lazy">
+                </div>
+            </div>
+            <div class="right-column">
+                <form class="signup-form" 
+                      action="/signup" 
+                      method="POST" 
+                      novalidate>
+                    
+                    <h2 class="form-title">Create Account</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" 
+                               id="fullName" 
+                               name="name" 
+                               class="form-input" 
+                               required 
+                               minlength="2" 
+                               maxlength="100" 
+                               autocomplete="name"
+                               placeholder=" "
+                               aria-required="true">
+                        <span class="error-message" aria-live="polite">
+                            Please enter your full name
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               class="form-input" 
+                               required 
+                               autocomplete="email"
+                               placeholder=" "
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               aria-required="true">
+                        <span class="error-message" aria-live="polite">
+                            Please enter a valid email address
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" 
+                               id="mobile" 
+                               name="mobile" 
+                               class="form-input" 
+                               required 
+                               autocomplete="tel"
+                               placeholder=" "
+                               pattern="[0-9]{10}"
+                               aria-required="true">
+                        <span class="error-message" aria-live="polite">
+                            Please enter a valid 10-digit mobile number
+                        </span>
+                    </div>
+                    
+                    <!-- Password Field -->
+<div class="form-group" style="position: relative;">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password"
+           id="passwordInput"
+           name="password"
+           class="form-input"
+           required
+           minlength="8"
+           placeholder=" ">
+    <span class="error-message" aria-live="polite">
+      Password must be at least 8 characters long
+    </span>
+    
+    <!-- 👁 Eye Icon (Default: Slashed) -->
+    <span class="toggle-password" onclick="togglePasswordVisibility('passwordInput', 'eyeIcon1')" 
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+      <i id="eyeIcon1" class="fa fa-eye-slash"></i>
+    </span>
+  </div>
+  
+  <!-- Confirm Password Field -->
+  <div class="form-group" style="position: relative;">
+    <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+    <input type="password"
+           id="confirmPasswordInput"
+           name="confirmpassword"
+           class="form-input"
+           required
+           minlength="8"
+           placeholder=" ">
+    <span class="error-message" aria-live="polite">
+      Passwords must match
+    </span>
+    
+    <!-- 👁 Eye Icon (Default: Slashed) -->
+    <span class="toggle-password" onclick="togglePasswordVisibility('confirmPasswordInput', 'eyeIcon2')" 
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+      <i id="eyeIcon2" class="fa fa-eye-slash"></i>
+    </span>
+  </div>
+  
+                    
+                    <button type="submit" class="submit-button",name="submit">
+                        Create Account
+                    </button>
+                    
+                    <p class="login-link">
+                        Already have an account?
+                        <a href="{{url_for('login')}}" class="login-text-bold">Login</a>
+                    </p>
+                    
+                    <!-- <div class="social-signup">
+                        <button type="button" 
+                                class="social-button" 
+                                aria-label="Sign up with Google">
+                            Sign up with Google
+                        </button>
+                        <button type="button" 
+                                class="social-button" 
+                                aria-label="Sign up with Facebook">
+                            Sign up with Facebook
+                        </button>
+                    </div> -->
+                </form>
+            </div>
+        </div>
+    </main>
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+          let inputField = document.getElementById(inputId);
+          let icon = document.getElementById(iconId);
+      
+          if (inputField.type === "password") {
+            inputField.type = "text";  // Show password
+            icon.classList.remove("fa-eye-slash");  // Remove slashed eye icon
+            icon.classList.add("fa-eye");  // Add normal eye icon
+          } else {
+            inputField.type = "password";  // Hide password
+            icon.classList.remove("fa-eye");  // Remove normal eye icon
+            icon.classList.add("fa-eye-slash");  // Add slashed eye icon
+          }
+        }
+    </script>
+    
+    
+    
+</body>
+</html>

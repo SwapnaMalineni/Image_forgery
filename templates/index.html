@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Authentix</title>
+  <style>
+    :root {
+      --primary-color: rgba(91, 134, 229, 1);
+      --secondary-color: rgba(171, 193, 242, 1);
+      --text-color: #333;
+      --white: #ffffff;
+      --gray: #777676;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'PP Telegraf', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .homepage {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .header {
+      background-color: var(--white);
+      padding: 1rem 5%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-family: 'Aboreto', serif;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      padding: 5rem 5%;
+      background-color: var(--secondary-color);
+      min-height: 80vh;
+      position: relative;
+    }
+
+    .hero-content {
+      flex: 1;
+      padding-right: 5rem;
+    }
+
+    .hero-content h1 {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-content p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .try-now-btn {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .hero-image {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end; /* Align image to the right */
+      align-items: flex-end; /* Align image to the bottom */
+      height: 100%; /* Make the image fill the height of the hero section */
+    }
+
+    .hero-image img {
+      width: 100%; /* Make the image fill the container */
+      max-width: 800px; /* Increase max-width for a bigger image */
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+      object-fit: cover; /* Ensure the image covers the area */
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      padding: 5rem 5%;
+      background-color: var(--white);
+    }
+
+    .feature-card {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-card img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1.5rem;
+    }
+
+    .how-it-works {
+      padding: 5rem 5%;
+      background-color: #f8f9fa;
+      text-align: center;
+    }
+
+    .how-it-works h2 {
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .step {
+      position: relative;
+      padding: 2rem;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary-color);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-weight: 600;
+    }
+
+    .cta {
+      text-align: center;
+      padding: 5rem 5%;
+      background-color: rgb(139, 174, 248);
+      color: var(--black);
+    }
+
+    .cta h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .signup-btn {
+      background-color: var(--white);
+      color: var(--primary-color);
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      cursor: pointer;
+    }
+
+    .footer {
+      background-color: var(--white);
+      color: #1a1a1a;;
+      padding: 4rem 5%;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-section a {
+      color: #1a1a1a;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    @media (max-width: 991px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 3rem 5%;
+      }
+
+      .hero-content {
+        padding-right: 0;
+        margin-bottom: 3rem;
+      }
+
+      .features,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+    /* ✅ Our Services Section */
+    .our-services {
+      
+      background-color: var(--primary-color);
+      
+      color: black;
+      text-align: center;
+      padding: 40px 15px;
+    }
+
+    .our-services h2 {
+      font-size: 2em;  /* Decreased from 2.5em */
+      color: black;
+      margin-bottom: 25px;
+    }
+
+    /* ✅ Services Container */
+    .services {
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* Reduced gap */
+      flex-wrap: wrap;
+    }
+
+    /* ✅ Individual Service Box */
+    .service {
+      background: var(--secondary-color);
+      padding: 15px; /* Reduced padding */
+      border-radius: 10px;
+      width: 250px; /* Decreased width */
+      text-align: center;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .service:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(245, 248, 248, 0.5);
+    }
+
+    /* ✅ Image Styling */
+    .service img {
+      width: 100%;
+      height: 150px; /* Reduced height */
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* ✅ Heading */
+    .service h3 {
+      margin: 10px 0;
+      font-size: 1.3em; /* Decreased from 1.5em */
+      color: black;
+    }
+
+    /* ✅ Description Text */
+    .service p {
+      font-size: 0.9em; /* Decreased from 1em */
+      color: black;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="homepage">
+    <header class="header">
+      <nav class="nav">
+        <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+          <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo" class="logo-icon" style="width: 40px; height: 40px;">
+          <span style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">Image Authentix</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+          <li><a href="{{url_for('login')}}">Login</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Try Image Forgery Detector, be on the safe side!</h1>
+          <p>Experience superior image forgery detection capabilities, enabling the identification of altered, edited, fake or counterfeit images.</p>
+          <p>Our clients leverage advanced IFD artificial intelligence algorithms combined with cutting-edge image analysis technology to detect digital image manipulation</p>
+          <a href="{{url_for('login')}}"><button class="try-now-btn">Try Now</button></a>
+        </div>
+        <div class="hero-image">
+          <img src="{{url_for('static',filename='hero-image.webp')}}" alt="AI Image Analysis Visualization" id="img1">
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="feature-card">
+          <img src="{{url_for('static',filename='accuracy1.png')}}" alt="High Accuracy Icon" />
+          <h3>Unmatched Accuracy</h3>
+          <p>Detects forgeries with 99.9% precision using AI-powered algorithms.</p>
+        </div>
+        <div class="feature-card">
+          <img src="{{url_for('static',filename='real-time.png')}}" alt="Real-time Analysis Icon" />
+          <h3>Real-time Analysis</h3>
+          <p>Delivering real-time results for fast and reliable forgery detection</p>
+        </div>
+        <div class="feature-card">
+          <img src="{{url_for('static',filename='security.png')}}" alt="Secure Analysis Icon" />
+          <h3>Secure & Confidential</h3>
+          <p>Protects your data with end-to-end encryption, ensuring absolute privacy</p>
+        </div>
+      </section>
+      <section class="our-services">
+        <h2>Our Services</h2>
+        <div class="services">
+          <div class="service">
+            <img src="https://gorkana-wp-files.s3.amazonaws.com/gorkana/wp-content/uploads/2018/05/23102744/What-Journalists-say-they-want-03.jpg" alt="Managed IT Services">
+            <h3>Media and Journalism</h3>
+            <p>Assists journalists in verifying the authenticity of images before publishing to prevent misinformation</p>
+          </div>
+          <div class="service">
+            <img src="https://dynamicweb.com/Admin/Public/GetImage.ashx?image=%2fFiles%2fImages%2fecommerce-marketplace.jpg&width=1920&format=webp" alt="IT Security">
+            <h3>E-Commerce and Online Marketplaces</h3>
+            <p>Detects manipulated product images to prevent fraudulent listings and misleading advertisements.</p>
+          </div>
+          <div class="service">
+            <img src="https://rjforsec.com/wp-content/uploads/2023/03/Mentonlytics-social-media-monitoring2-768x383.png" alt="IT Consulting">
+            <h3>Social Media Monitoring</h3>
+            <p>Identifies fake or altered images shared on social platforms to combat misinformation and deepfakes</p>
+          </div>
+          <div class="service">
+            <img src="https://recfaces.com/wp-content/uploads/2021/01/cyberattack2-830x553.jpeg" alt="Managed IT Services">
+            <h3>Digital Forensics</h3>
+            <p>Helps law enforcement and forensic experts analyze tampered images in criminal investigations.</p>
+          </div>
+          <div class="service">
+            <img src="https://www.aryaman.co.in/wp-content/uploads/2024/01/Forensic-Accounting-Tracing-Financial-Transactions-By-Aryaman-Detective.jpg" alt="IT Security">
+            <h3>Legal and Court Evidence Verification</h3>
+            <p>Ensures that images presented as evidence in court cases are authentic and untampered.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Upload Image</h3>
+            <p>Select and upload any image for instant authenticity verification</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>AI Processing</h3>
+            <p>Our cutting-edge AI meticulously examines the image for any signs of manipulation</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Get Results</h3>
+            <p>Receive a comprehensive forgery report with accuracy scores and visual insights</p>
+          </div>
+        </div>
+      </section>
+      
+
+      <section class="cta">
+        <h2>Start Detecting Image Forgery Today</h2>
+        <p>Join thousands of users who trust our system to uncover image manipulations <br>  
+          with AI-powered precision, real-time detection, and unmatched accuracy <br>  
+          ensuring authenticity and security at every step!</p>       
+        <a href="{{url_for('signup')}}"><button class="signup-btn">Sign Up Now</button></a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#press">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#docs">Documentation</a></li>
+            <li><a href="#support">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#security">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to Image Forgery Detection System">
+  <title>Login - Image Forgery Detection System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background-color: rgba(171, 193, 242, 1);
+    }
+
+    /* ✅ Header Styles */
+    .header {
+      background-color: white;
+      padding: 1rem 5%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: rgba(91, 134, 229, 1);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .login-btn {
+      text-decoration: none;
+      color: white;
+      background-color: rgba(91, 134, 229, 1);
+      padding: 8px 16px;
+      border-radius: 5px;
+    }
+
+    /* ✅ Login Section */
+    .login-container {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      gap: 50px;
+    }
+
+    
+.left-column {
+  display: flex;
+  justify-content: flex-end; /* Moves image left */
+  align-items: center;
+  padding-right: 30px; /* Adjust this value to fine-tune */
+}
+    /* ✅ Ensure Image Stays Responsive */
+.left-column img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+    .right-column {
+    background-color: white;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+    position: relative;
+    top: -30px; /* Moves form up */
+    }
+
+    .form-title {
+      font-size: 30px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 1rem;
+      background-color: rgba(91, 134, 229, 1);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .signup-link a {
+      color: rgba(91, 134, 229, 1);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 991px) {
+      .login-container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      @media (max-width: 991px) {
+        .left-column {
+          margin-left: 0;
+          /* Reset for mobile view */
+        }
+      }
+
+      @media (max-width: 991px) {
+        .left-column {
+            justify-content: center; /* Center image on smaller screens */
+            padding-right: 0;
+        }
+    }
+      @media (max-width: 991px) {
+    .right-column {
+        top: 0; /* Reset for mobile */
+        padding: 2rem;
+    }
+    }
+    
+  
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ Header (Same as Home & Contact Page) -->
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo">
+        <!-- <span>Image Forgery Detection System</span> -->
+        <span style="font-size: 1.8rem; font-weight: bold; color: #5b86e5;">Image Authentix</span>
+      
+      </div>
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ✅ Login Section with Image -->
+  <main class="login-container">
+    <!-- ✅ Image Section -->
+    <div class="left-column">
+      <img src="{{ url_for('static', filename='avatar2.svg') }}"
+                 alt="Image Forgery Detection System Illustration">
+    </div>
+
+    <!-- ✅ Login Form -->
+    <div class="right-column">
+      <form class="login-form" method="POST" action="/login" novalidate>
+        <h2 class="form-title">Sign-in</h2>
+      
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email"
+                     id="email"
+                     name="email"
+                     class="form-input"
+                     required
+                     autocomplete="email"
+                     placeholder=" "
+                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                     aria-required="true">
+          <span class="error-message" aria-live="polite">
+                  Please enter a valid email address
+              </span>
+        </div>
+      
+        <div class="form-group" style="position: relative;">
+          <label for="passwordInput" class="form-label">Password</label>
+          <input type="password"
+                     id="passwordInput"
+                     name="password"
+                     class="form-input"
+                     required
+                     minlength="8"
+                     placeholder=" "
+                     aria-required="true">
+          <span class="error-message" aria-live="polite">
+                  Please enter your password
+              </span>
+              <!-- 👁 Eye Icon (Default: Slashed) -->
+  <span class="toggle-password" onclick="togglePasswordVisibility('passwordInput', 'eyeIcon')" 
+        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <i id="eyeIcon" class="fa fa-eye-slash"></i>
+  </span>
+        </div>
+      
+        <button type="submit" class="submit-button" name="submit">
+              Login
+          </button>
+          
+      
+        <p class="signup-link">
+          Don't have an account?
+          <a href="{{ url_for('signup') }}" class="signup-text-bold">Sign up</a>
+        </p>
+        <p class="forgot-password" style="text-align:center;">
+          <a href="{{ url_for('forgot_password') }}" >Forgot Password?</a>
+      </p>
+      
+      </form>
+    </div>
+  </main>
+  <script>
+    function togglePasswordVisibility(inputId, iconId) {
+      let inputField = document.getElementById(inputId);
+      let icon = document.getElementById(iconId);
+  
+      if (inputField.type === "password") {
+        inputField.type = "text";  // Show password
+        icon.classList.remove("fa-eye-slash");  // Remove slashed eye icon
+        icon.classList.add("fa-eye");  // Add normal eye icon
+      } else {
+        inputField.type = "password";  // Hide password
+        icon.classList.remove("fa-eye");  // Remove normal eye icon
+        icon.classList.add("fa-eye-slash");  // Add slashed eye icon
+      }
+    }
+</script>
+</body>
+
+</html>

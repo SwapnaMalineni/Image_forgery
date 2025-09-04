@@ -1,0 +1,28 @@
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database file
+instance/
+database.db
+
+# Uploaded files and reports
+uploads/
+reports/
+
+# Large model file
+forgery_model.h5
+
+# IDE and OS specific
+.vscode/
+.idea/
+.DS_Store
+
+# Other
+ngrok.exe
+*.log

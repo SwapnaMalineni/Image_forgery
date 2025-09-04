@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Sidebar Menu</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar-container">
+      <aside class="sidebar">
+        <a href="#" class="menu-header menu-item">
+          <span class="material-icons">chevron_left</span>
+          <span>Dashboard</span>
+        </a>
+
+        <!-- User Info -->
+        <div class="user-info menu-item">
+          <img src="{{ url_for('static', filename='user.png') }}" alt="User Avatar" id="profile-picture">      
+          <div>
+            <p class="profile-name">{{ current_user.username }}</p> 
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="sidebar-menu">
+          <a href="{{ url_for('settings') }}" class="menu-item">
+            <span class="material-icons">tune</span>
+            <span>Personal Settings</span>
+          </a>
+          <a href="{{ url_for('ela_image') }}" class="menu-item">
+            <span class="material-icons">upload</span>
+            <span>ELA Image</span>
+          </a>
+          <a href="#" class="menu-item">
+            <span class="material-icons">dashboard</span>
+            <span>Analysis</span>
+          </a>
+          <a href="{{ url_for('reports_history') }}" class="menu-item">
+            <span class="material-icons">history</span>
+            <span>Reports History</span>
+          </a>
+          <a href="{{ url_for('about') }}" class="menu-item">
+            <span class="material-icons">info</span>
+            <span>About</span>
+          </a>
+        </nav>
+
+        <!-- Logout Link -->
+        <a href="{{ url_for('logout') }}" class="logout-button">
+          <span class="material-icons">logout</span>
+          <span>Logout</span>
+        </a>
+      </aside>
+    </div>
+
+    <!-- Main Content Placeholder -->
+    <main class="main-content">
+      <div class="container1">
+        <!-- Header -->
+        <header class="header">
+          <div class="logo">
+            <h1 id="welcomeText">Hey, {{ current_user.username }}!</h1>
+          </div>
+        </header>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="container2">
+        <section class="content">
+          <div class="dashboard">
+            <!-- Upload Section -->
+            <div class="upload-section">
+              <div class="drop-zone" id="dropZone">
+                <div style="margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600;">Drag & Drop Image</div>
+                <div class="file-info">Max file size: 25MB • Formats: JPEG, PNG, WEBP</div>
+              </div>
+              <input type="file" id="fileInput" hidden accept="image/*">
+              
+              <div class="preview-container">
+                <img id="imagePreview" alt="Image preview">
+              </div>
+              <div id="successMessage" class="success-message"></div>
+  
+              <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Forgery Analysis in Progress...</div>
+              </div>
+  
+              <button onclick="analyzeImage()" id="analyzeBtn" style="margin-top: 1rem;">
+                Initiate Deep Scan
+              </button>
+              <button onclick="clearImageAndAnalysis()" id="clearBtn" style="margin-top: 1rem;">
+                Clear Image & Analysis
+              </button>
+            </div>
+  
+            <!-- Analysis Results -->
+            <div class="analysis-results">
+              <div class="result-card" id="resultCard">
+                <div class="result-header">
+                  <div class="status-indicator" style="color: rgb(104, 177, 236);"></div>
+                  <h2>IMAGE ANALYSIS</h2>
+                </div>
+                <!-- Detailed Analysis Section (Hidden by default) -->
+              <div class="detailed-analysis" id="detailedAnalysis">
+                <h2>Highlighted Image</h2>
+                <div class="detailed-card">
+                  <!-- Image Analysis Section -->
+                  <div class="analysis-image-container">
+                    <img id="detailedImage" src="" alt="Detailed Analysis Image">
+                    <div class="highlight-region"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="status-text" id="statusText"></div>
+                <!-- Metrics Content -->
+                <div id="metricsContent" class="metrics-content">
+                  <h3>Detailed Analysis</h3>
+                  <div class="metric">
+                    <span class="metric-label">Confidence Level</span>
+                    <span class="metric-value" id="confidenceValue">-</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">ELA Variance</span>
+                    <span class="metric-value" id="elaValue">-</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Noise Consistency</span>
+                    <span class="metric-value" id="noiseValue">-</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Metadata</span>
+                    <span class="metric-value" id="metadataValue">-</span>
+                  </div>
+                </div>
+                <!-- Skeleton Loader (visible during analysis) --> 
+                <div id="skeletonMetrics" class="skeleton-metrics">
+                  <div class="skeleton" style="width: 80%; height: 10px; background: var(--border); margin-bottom: 10px; border-radius: 4px;"></div>
+                  <div class="skeleton" style="width: 90%; height: 10px; background: var(--border); margin-bottom: 10px; border-radius: 4px;"></div>
+                  <div class="skeleton" style="width: 70%; height: 10px; background: var(--border); margin-bottom: 10px; border-radius: 4px;"></div>
+                  <div class="skeleton" style="width: 60%; height: 10px; background: var(--border); margin-bottom: 10px; border-radius: 4px;"></div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

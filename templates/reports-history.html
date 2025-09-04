@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Reports History - Image Authentix</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #111827;
+    }
+
+    /* Chevron Arrow Button */
+    .chevron-button {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1000;
+    }
+
+    .chevron-button a {
+      text-decoration: none;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      background-color: #f9fafb;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .chevron-button a:hover {
+      background-color: #e0e7ff;
+      color: #6366f1;
+    }
+
+    /* Clear History Button */
+    .clear-history {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      background-color: #dc2626;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .clear-history:hover {
+      background-color: #b91c1c;
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: #ffffff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background-color: #f9f9fb;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    tr:hover {
+      background-color: #f3f4f6;
+    }
+
+    .status {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      display: inline-block;
+    }
+
+    .status.authentic {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .status.forged {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* View Details Button Styling */
+    .view-summary {
+      color: #6366f1;
+      background-color: #e0e7ff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      border: none;
+      display: inline-block;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .view-summary:hover {
+      background-color: #c7d2fe;
+      color: #4f46e5;
+    }
+
+    .view-summary::after {
+      content: "▼";
+      font-size: 12px;
+      margin-left: 5px;
+      transition: transform 0.2s ease;
+    }
+
+    details[open] .view-summary::after {
+      content: "▲";
+    }
+
+    .view-summary:hover::after {
+      transform: translateY(2px);
+    }
+
+    /* Expanded Details Section */
+    .details-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .highlighted-image {
+      width: 300px;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    /* Buttons in Expanded Section */
+    .details-container button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+
+    .details-container button:hover {
+      opacity: 0.8;
+    }
+
+    .download-pdf-btn {
+      background-color: #6366f1;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #dc2626;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Chevron Arrow Button -->
+  <div class="chevron-button">
+    <a href="/dashboard">
+      <span class="material-icons">chevron_left</span>
+    </a>
+  </div>
+  <div class="container">
+    <h1>Reports History</h1>
+    <button class="clear-history" onclick="clearHistory()">Clear History</button>
+    <table>
+      <thead>
+        <tr>
+          <th>S.No.</th>
+          <th>Image Name</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody id="reportsTableBody">
+        <!-- Reports will be dynamically populated here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch('/get-analysis-history')
+        .then(response => response.json())
+        .then(data => {
+          const reportsTableBody = document.getElementById('reportsTableBody');
+          reportsTableBody.innerHTML = data.map((entry, index) => {
+            const imageName = entry.image_name || "Unknown Image";
+            const resultText = entry.result ? entry.result.toLowerCase() : "unknown";
+            const confidence = entry.confidence && !isNaN(entry.confidence) 
+                ? `${(parseFloat(entry.confidence) * 100).toFixed(2)}%` 
+                : "N/A";
+            const timestamp = entry.timestamp || "Unknown Time";
+            const metadata = entry.image_metadata ? entry.image_metadata.replace(/\n/g, "<br>") : "No metadata available";
+            const imageUrl = entry.image ? `/uploads/${entry.image}` : '';
+
+            const statusClass = resultText === "authentic" ? "status authentic" :
+                              resultText === "forged" ? "status forged" : "status";
+
+            return `
+              <tr id="report-${entry.id}">
+                <td>${index + 1}</td>
+                <td>${imageName}</td>
+                <td>${timestamp}</td>
+                <td><span class="${statusClass}">${resultText.toUpperCase()} (${confidence})</span></td>
+                <td>
+                  <details>
+                    <summary class="view-summary">View Details</summary>
+                    <div class="details-container">
+                      <div class="metadata">
+                        <p>${metadata}</p>
+                      </div>
+                      ${imageUrl ? `<img src="${imageUrl}" alt="Highlighted Image" class="highlighted-image">` : ''}
+                      <button class="download-pdf-btn" onclick="downloadPdf('${imageName}')">Download PDF</button>
+                      <button class="delete-btn" onclick="deleteReport(${entry.id})">Delete Image</button>
+                    </div>
+                  </details>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        })
+        .catch(error => {
+          console.error('Error fetching analysis history:', error);
+        });
+    });
+
+    function clearHistory() {
+      if (confirm("Are you sure you want to delete all history? This action cannot be undone.")) {
+        fetch('/clear-analysis-history', { method: 'POST' })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('reportsTableBody').innerHTML = '';
+              alert("History cleared successfully!");
+            }
+          })
+          .catch(error => {
+            console.error('Error clearing history:', error);
+          });
+      }
+    }
+
+    function deleteReport(reportId) {
+      if (confirm("Are you sure you want to delete this report?")) {
+        fetch(`/delete-report/${reportId}`, { 
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("Report deleted successfully!");
+            document.getElementById(`report-${reportId}`).remove(); // Remove row from table
+          } else {
+            alert("Error deleting report: " + data.error);
+          }
+        })
+        .catch(error => console.error('Error deleting report:', error));
+      }
+    }
+
+    function downloadPdf(imageName) {
+      // Redirect to the PDF download route
+      window.location.href = `/download_report/${imageName}`;
+    }
+  </script>
+</body>
+</html>
