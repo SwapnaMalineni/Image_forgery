@@ -91,11 +91,6 @@ class AnalysisHistory(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     image_metadata = db.Column(db.Text, nullable=True)
 
-# Create tables (if they don't exist)
-with app.app_context():
-    db.create_all()
-    print("Tables created successfully!")
-    
 # Email Config
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587

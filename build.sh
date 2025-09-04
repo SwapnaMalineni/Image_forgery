@@ -10,15 +10,8 @@ pip install -r requirements.txt
 flask db upgrade
 
 # Download the model file
-# The forgery_model.h5 file is too large to be included in the repository.
-# You should host it on a cloud storage service and provide a direct download link here.
-# For example, using wget:
-# wget -O forgery_model.h5 YOUR_DIRECT_DOWNLOAD_LINK
-#
-# If you use Google Drive, you can use a tool like gdown:
-# pip install gdown
-# gdown --id YOUR_FILE_ID
+wget -O forgery_model.h5 "https://drive.google.com/uc?export=download&id=1Zl8LLFLnVDyzo_qO1b-ZKX3rcPUCjS5q"
 
 if [ ! -f forgery_model.h5 ]; then
-  echo "Model file not found. Please download it and place it in the root directory or update the build.sh script to download it."
+  echo "Model file not found. Download failed."
 fi
