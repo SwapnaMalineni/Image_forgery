@@ -18,6 +18,7 @@ import numpy as np
 from datetime import datetime
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
+import traceback
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeSerializer
 import string
@@ -64,18 +65,77 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 model = None
+MODEL_LOADED_FROM = None
 
 def get_model():
-    """Lazy-load the Keras model. Returns None if the model file is not present."""
+    """Lazy-load the Keras model.
+
+    Tries a set of candidate paths and prints detailed diagnostics so the
+    deployment logs show where the app looked for the file and any load
+    errors. Returns the loaded model or None on failure.
+    """
     global model
-    if model is None:
-        try:
-            model = load_model('forgery_model.h5')
-            print("✅ Model loaded successfully!")
-        except Exception as e:
-            print(f"❌ Error loading model: {e}")
-            model = None
-    return model
+    if model is not None:
+        return model
+
+    candidate_paths = []
+
+    # Explicit override via env var
+    env_path = os.environ.get('MODEL_PATH')
+    if env_path:
+        candidate_paths.append(env_path)
+
+    # App directory (where app.py lives)
+    app_dir_path = os.path.join(os.path.dirname(__file__), 'forgery_model.h5')
+    candidate_paths.append(app_dir_path)
+
+    # Current working directory
+    cwd_path = os.path.join(os.getcwd(), 'forgery_model.h5')
+    candidate_paths.append(cwd_path)
+
+    # Render persistent data directory used earlier in the app
+    render_data_path = os.path.join(DATA_DIR, 'forgery_model.h5')
+    candidate_paths.append(render_data_path)
+
+    # Upload folder (in case you place it there)
+    upload_folder_path = os.path.join(app.config.get('UPLOAD_FOLDER', ''), 'forgery_model.h5')
+    candidate_paths.append(upload_folder_path)
+
+    tried = []
+    for p in candidate_paths:
+        if not p:
+            continue
+        tried.append(p)
+        if os.path.exists(p):
+            try:
+                print(f"⏳ Loading model from: {p}")
+                model = load_model(p)
+                # remember which path successfully loaded the model
+                try:
+                    global MODEL_LOADED_FROM
+                    MODEL_LOADED_FROM = p
+                except Exception:
+                    pass
+                print(f"✅ Model loaded successfully from: {p}")
+                return model
+            except Exception as e:
+                print(f"❌ Error loading model from {p}: {e}")
+
+    # If we reach here, no model could be loaded
+    print("❌ Model not found. Paths tried:")
+    for t in tried:
+        print(f" - {t}")
+
+    # Also print the working directory and upload folder for easier debugging
+    try:
+        print(f"Working dir: {os.getcwd()}")
+        print(f"UPLOAD_FOLDER: {app.config.get('UPLOAD_FOLDER')}")
+        print(f"DATA_DIR: {DATA_DIR}")
+    except Exception:
+        pass
+
+    model = None
+    return None
 
 # User Model
 class User(db.Model, UserMixin):
@@ -324,6 +384,9 @@ def analyze():
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
+    # initialize to ensure finally block is safe if an early exception occurs
+    filepath = None
+    highlighted_image_filename = None
 
     try:
         # Save the uploaded file
@@ -332,8 +395,8 @@ def analyze():
         file.save(filepath)
         print(f"✅ File saved at: {filepath}")
 
-        # Check if the model is loaded
-        if model is None:
+        # Ensure model is loaded (attempt to load lazily)
+        if get_model() is None:
             return jsonify({"error": "Model not loaded. Please check the logs."}), 500
 
         # Perform forgery detection
@@ -407,9 +470,14 @@ def analyze():
 
     finally:
         # Delete the original file if it's not needed
-        if os.path.exists(filepath) and filepath != os.path.join(app.config['UPLOAD_FOLDER'], highlighted_image_filename if highlighted_image_filename else filename):
-            os.remove(filepath)
-            print(f"✅ File deleted: {filepath}")
+        try:
+            if filepath and os.path.exists(filepath):
+                preserved = os.path.join(app.config['UPLOAD_FOLDER'], highlighted_image_filename if highlighted_image_filename else filename)
+                if filepath != preserved:
+                    os.remove(filepath)
+                    print(f"✅ File deleted: {filepath}")
+        except Exception as e:
+            print(f"❌ Error during cleanup: {e}")
 
 # Reports History Route
 @app.route('/reports-history')
@@ -818,8 +886,7 @@ def convert_to_ela_image(image_path, quality=90):
     scale = 255.0 / max_diff if max_diff != 0 else 1
     ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
 
-    # Generate a filename for the ELA image
-    ela_filename = 'ela_' + os.path.basename(image_path)
+    # Generate a filename for the ELA image (returned by caller as content)
 
     # Clean up the temporary file
     os.remove(temp_path)
@@ -954,8 +1021,8 @@ def api_detect_forgery():
         print(f"   - Size: {img.size}")
         print(f"   - Format: {img.format}")
         print(f"   - Mode: {img.mode}")
-        # Check if the model is loaded
-        if model is None:
+        # Ensure model is loaded (attempt to load lazily)
+        if get_model() is None:
             return jsonify({"success": False, "error": "Model not loaded. Please check the logs."}), 500
 
         # Perform forgery detection
@@ -1018,6 +1085,17 @@ def api_detect_forgery():
                     print(f"✅ File deleted: {filepath}")
                 except Exception as e:
                     print(f"❌ Error deleting file: {e}")
+
+
+@app.route('/health')
+def health():
+    """Simple health endpoint returning whether the model is loaded and which path was used."""
+    mdl = get_model()
+    return jsonify({
+        'ok': True,
+        'model_loaded': mdl is not None,
+        'model_path': MODEL_LOADED_FROM
+    })
 
 
 # Run the Flask application
