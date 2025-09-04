@@ -63,13 +63,19 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Load the trained model
-try:
-    model = load_model('forgery_model.h5')
-    print("✅ Model loaded successfully!")
-except Exception as e:
-    print(f"❌ Error loading model: {e}")
-    model = None
+model = None
+
+def get_model():
+    """Lazy-load the Keras model. Returns None if the model file is not present."""
+    global model
+    if model is None:
+        try:
+            model = load_model('forgery_model.h5')
+            print("✅ Model loaded successfully!")
+        except Exception as e:
+            print(f"❌ Error loading model: {e}")
+            model = None
+    return model
 
 # User Model
 class User(db.Model, UserMixin):
@@ -96,7 +102,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'imageauthentix@gmail.com'
-app.config['MAIL_PASSWORD'] = 'pajh gwns tbis qndt'
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'pajh gwns tbis qndt')
 app.config['MAIL_DEFAULT_SENDER'] = 'imageauthentix@gmail.com'
 mail = Mail(app)
 
@@ -498,7 +504,10 @@ def prepare_image(image_path, image_size=(128, 128)):
 
 def detect_forgery(image_path):
     ela_image, image_array = prepare_image(image_path)
-    prediction = model.predict(image_array)[0]
+    mdl = get_model()
+    if mdl is None:
+        raise RuntimeError('Model not loaded')
+    prediction = mdl.predict(image_array)[0]
     class_label = "Authentic" if np.argmax(prediction) == 1 else "Forged"
     confidence = np.max(prediction)
     return class_label, confidence, ela_image
@@ -1014,3 +1023,11 @@ def api_detect_forgery():
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+@app.cli.command('init-db')
+def init_db_command():
+    """Initialize the database (create tables)."""
+    with app.app_context():
+        db.create_all()
+        print('Initialized the database.')
