@@ -13,3 +13,8 @@ tensorflow
 gunicorn
 alembic
 SQLAlchemy
+Flask-Login
+Flask-Bcrypt
+Flask-Mail
+itsdangerous
+fpdf
