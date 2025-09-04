@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: image-forgery-detector
+    env: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: ./start.sh
+    envVars:
+      - key: TF_CPP_MIN_LOG_LEVEL
+        value: "2"
+        sync: true
+      - key: CUDA_VISIBLE_DEVICES
+        value: ""
+        sync: true
+    disk: 1Gi

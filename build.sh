@@ -23,3 +23,9 @@ if [ ! -f "$MODEL_DEST" ]; then
 else
   echo "Model downloaded successfully to $MODEL_DEST"
 fi
+
+# Ensure the start script is executable so you can set it as the Render start command
+if [ -f start.sh ]; then
+  chmod +x start.sh || true
+  echo "Made start.sh executable"
+fi

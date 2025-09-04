@@ -9,7 +9,7 @@ Pillow
 numpy
 matplotlib
 opencv-python-headless
-tensorflow
+tensorflow-cpu
 gunicorn
 alembic
 SQLAlchemy

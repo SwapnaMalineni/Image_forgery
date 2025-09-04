@@ -1,27 +1,34 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from random import randint
-from werkzeug.utils import secure_filename
-from flask_bcrypt import Bcrypt
-from keras.models import load_model
-from PIL import Image, ImageChops, ImageEnhance
-import cv2
-import time
-import secrets
-from PIL.ExifTags import TAGS
 import os
-from flask import send_file, abort
-from fpdf import FPDF
-import random
-import numpy as np
+
+# Reduce TensorFlow logging noise before TensorFlow / Keras are imported.
+# 0 = all logs, 1 = filter out INFO, 2 = filter out INFO and WARNING, 3 = filter out all but FATAL
+os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '2')
+
 from datetime import datetime
+import random
+import secrets
+import string
+import time
+
+from flask import (Flask, flash, render_template, request, redirect, url_for,
+                   session, jsonify, send_from_directory, send_file, abort)
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import (UserMixin, login_user, LoginManager, login_required,
+                         logout_user, current_user)
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
+from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
-import traceback
-from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeSerializer
-import string
+from fpdf import FPDF
+
+from PIL import Image, ImageChops, ImageEnhance
+from PIL.ExifTags import TAGS
+import numpy as np
+import cv2
+import traceback
+from keras.models import load_model
 
 
 
