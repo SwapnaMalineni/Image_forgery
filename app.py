@@ -63,8 +63,8 @@ bcrypt=Bcrypt(app)
 
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
-#otp generation
-otp = randint(100000, 999999)
+# otp generation
+otp = random.randint(100000, 999999)
 
 # Initialize Flask-Login
 login_manager = LoginManager()
