@@ -21,19 +21,21 @@ pip install --upgrade gdown || true
 gdown --id 1Zl8LLFLnVDyzo_qO1b-ZKX3rcPUCjS5q -O "$MODEL_DEST" || true
 
 # Quick HDF5 signature sanity check (Keras .h5 should start with HDF5 signature)
-python - <<'PY'
+# Export MODEL_DEST so the Python snippet can read it from the environment.
+export MODEL_DEST="$MODEL_DEST"
+python - <<PY
 import sys
 import os
-path = os.environ.get('MODEL_DEST', None) or '$MODEL_DEST'
-if not os.path.exists(path):
-    print('Model download failed: file not found at', path)
-    sys.exit(1)
+path = os.environ.get('MODEL_DEST') or os.path.expandvars('$MODEL_DEST')
+if not path or not os.path.exists(path):
+  print('Model download failed: file not found at', path)
+  sys.exit(1)
 with open(path, 'rb') as f:
-    header = f.read(8)
-    # HDF5 files start with 0x89 H D F 0x0d 0x0a 0x1a 0x0a
-    if header != b'\x89HDF\r\n\x1a\n':
-        print('Downloaded file does not look like a valid HDF5 (.h5) file. Header:', header)
-        sys.exit(2)
+  header = f.read(8)
+  # HDF5 files start with 0x89 H D F 0x0d 0x0a 0x1a 0x0a
+  if header != b'\x89HDF\r\n\x1a\n':
+    print('Downloaded file does not look like a valid HDF5 (.h5) file. Header:', header)
+    sys.exit(2)
 print('Model downloaded and validated at', path)
 PY
 
