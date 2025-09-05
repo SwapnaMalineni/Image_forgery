@@ -12,4 +12,7 @@ services:
       - key: CUDA_VISIBLE_DEVICES
         value: ""
         sync: true
+      - key: MODEL_PATH
+        value: "/mnt/data/forgery_model.h5"
+        sync: true
     disk: 1Gi
