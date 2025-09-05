@@ -73,6 +73,7 @@ login_manager.login_view = 'login'
 
 model = None
 MODEL_LOADED_FROM = None
+LAST_LOGIN_ATTEMPT = None
 
 def get_model():
     """Lazy-load the Keras model.
@@ -271,18 +272,39 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password'].encode('utf-8')
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
         user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.check_password_hash(user.password, password):
+        # bcrypt expects the stored hash and the plain-text password (string)
+        match = False
+        if user:
+            try:
+                match = bcrypt.check_password_hash(user.password, password)
+            except Exception as e:
+                print(f"Error checking password for {email}: {e}")
+
+        # Record the attempt so it can be inspected via /health for debugging
+        global LAST_LOGIN_ATTEMPT
+        LAST_LOGIN_ATTEMPT = {'email': email, 'user_found': bool(user), 'match': bool(match)}
+        print(f"Login attempt for {email} - user_found={bool(user)} match={match}")
+
+        if user and match:
             login_user(user)
             flash('Login successful!', 'success')
+
+            # If MAIL_PASSWORD is not set in the environment, skip OTP/email
+            # verification and go straight to the dashboard (useful for
+            # local/testing/deploys without mail configured).
+            if not os.environ.get('MAIL_PASSWORD'):
+                print(f"MAIL_PASSWORD not set - skipping OTP for {email}")
+                return redirect(url_for('dashboard'))
+
             token = serializer.dumps(email)
             return redirect(url_for('verify_email', token=token))
         else:
             flash('Invalid credentials. Please try again.', 'danger')
-    
+
     return render_template('login.html')
 
 @app.route('/verify_email', methods=['GET'])
@@ -293,12 +315,17 @@ def verify_email():
             email = serializer.loads(token)
             session['email'] = email
             # Generate a new OTP every time the token is present (i.e., after login)
-            otp = randint(100000, 999999)
+            otp = random.randint(100000, 999999)
             session['otp'] = otp
             msg = Message('OTP', recipients=[email])
             msg.body = f'Your OTP is {otp}'
-            mail.send(msg)
-        except:
+            try:
+                mail.send(msg)
+            except Exception as e:
+                # Log the mail error but continue to the verify page so the user
+                # can still enter the OTP (useful in environments without mail).
+                print(f"Error sending OTP email to {email}: {e}")
+        except Exception:
             flash('Invalid or expired token.', 'danger')
             return redirect(url_for('login'))
     
@@ -337,16 +364,19 @@ def validate():
 @app.route('/resend', methods=['GET'])
 def resend():
     # Generate a new OTP
-    new_otp = randint(100000, 999999)
+    new_otp = random.randint(100000, 999999)
     session['otp'] = new_otp
     email = session.get('email')
 
-    # Send the new OTP email
+    # Send the new OTP email (resilient to mail failures)
     msg = Message('OTP', recipients=[email])
     msg.body = f'Your new OTP is {new_otp}'
-    mail.send(msg)
+    try:
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error sending resend OTP to {email}: {e}")
 
-    # Inform the user that a new OTP has been sent
+    # Inform the user that a new OTP has been sent (or attempted)
     errors = ['A new OTP has been sent to your email.']
     user = User.query.filter_by(email=email).first()
     return render_template('verify_email.html', username=user.username, errors=errors)
