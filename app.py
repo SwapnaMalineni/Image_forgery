@@ -303,7 +303,11 @@ def login():
             token = serializer.dumps(email)
             return redirect(url_for('verify_email', token=token))
         else:
-            flash('Invalid credentials. Please try again.', 'danger')
+            # Provide a clearer message: unknown email vs wrong password
+            if not user:
+                flash('Email not registered. Please sign up.', 'danger')
+            else:
+                flash('Incorrect password. Please try again.', 'danger')
 
     return render_template('login.html')
 
