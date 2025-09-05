@@ -28,7 +28,7 @@ from PIL.ExifTags import TAGS
 import numpy as np
 import cv2
 import traceback
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 
 
@@ -170,7 +170,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'imageauthentix@gmail.com'
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'pajh gwns tbis qndt')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
 app.config['MAIL_DEFAULT_SENDER'] = 'imageauthentix@gmail.com'
 mail = Mail(app)
 
@@ -219,7 +219,7 @@ def reset_password(token):
             errors.append('Password does not match')
             return render_template('reset_password.html', errors=errors, token=token)
 
-        user.password = bcrypt.generate_password_hash(new_password)
+        user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
         user.reset_token = None  # Clear the token after reset
         db.session.commit()
 
@@ -329,6 +329,7 @@ def verify_email():
                 # Log the mail error but continue to the verify page so the user
                 # can still enter the OTP (useful in environments without mail).
                 print(f"Error sending OTP email to {email}: {e}")
+                print(f"OTP for {email}: {otp}")
         except Exception:
             flash('Invalid or expired token.', 'danger')
             return redirect(url_for('login'))
@@ -379,6 +380,7 @@ def resend():
         mail.send(msg)
     except Exception as e:
         print(f"Error sending resend OTP to {email}: {e}")
+        print(f"OTP for {email}: {new_otp}")
 
     # Inform the user that a new OTP has been sent (or attempted)
     errors = ['A new OTP has been sent to your email.']

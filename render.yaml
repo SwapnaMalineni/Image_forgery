@@ -15,4 +15,7 @@ services:
       - key: MODEL_PATH
         value: "/mnt/data/forgery_model.h5"
         sync: true
-    disk: 1Gi
+    disk:
+      name: data
+      mountPath: /mnt/data
+      sizeGB: 1
