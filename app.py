@@ -25,15 +25,21 @@ from fpdf import FPDF
 
 from PIL import Image, ImageChops, ImageEnhance
 from PIL.ExifTags import TAGS
+from PIL import ImageFile
 import numpy as np
 import cv2
 import traceback
 from tensorflow.keras.models import load_model
-
+import gc
 
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='static')
+# Limit upload size to avoid memory spikes (e.g., 8 MB)
+app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
+# Protect against decompression bombs
+Image.MAX_IMAGE_PIXELS = 20_000_000
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # Define the persistent data path for Render
 DATA_DIR = '/mnt/data'
@@ -117,7 +123,7 @@ def get_model():
         if os.path.exists(p):
             try:
                 print(f"⏳ Loading model from: {p}")
-                model = load_model(p)
+                model = load_model(p, compile=False)
                 # remember which path successfully loaded the model
                 try:
                     global MODEL_LOADED_FROM
@@ -438,6 +444,19 @@ def analyze():
         file.save(filepath)
         print(f"✅ File saved at: {filepath}")
 
+        # Downscale original before heavy processing to reduce memory
+        try:
+            img_cv = cv2.imread(filepath)
+            if img_cv is not None:
+                h, w = img_cv.shape[:2]
+                max_side = 1600
+                if max(h, w) > max_side:
+                    scale = max_side / float(max(h, w))
+                    img_cv = cv2.resize(img_cv, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+                    cv2.imwrite(filepath, img_cv)
+        except Exception as _:
+            pass
+
         # Ensure model is loaded (attempt to load lazily)
         if get_model() is None:
             return jsonify({"error": "Model not loaded. Please check the logs."}), 500
@@ -521,6 +540,12 @@ def analyze():
                     print(f"✅ File deleted: {filepath}")
         except Exception as e:
             print(f"❌ Error during cleanup: {e}")
+        # Encourage memory to be reclaimed on small instances
+        try:
+            del ela_image
+        except Exception:
+            pass
+        gc.collect()
 
 # Reports History Route
 @app.route('/reports-history')
@@ -626,8 +651,22 @@ def detect_forgery(image_path):
 def highlight_fake_regions(image_path):
     ela_image, _ = prepare_image(image_path)
     ela_gray = np.array(ela_image.convert('L'))
+
+    # Load original image
     original = cv2.imread(image_path)
     original = cv2.cvtColor(original, cv2.COLOR_BGR2RGB)
+
+    # Downscale very large images to reduce memory (keep aspect ratio)
+    max_side = 1024
+    h, w = original.shape[:2]
+    scale = 1.0
+    if max(h, w) > max_side:
+        scale = max_side / float(max(h, w))
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        original = cv2.resize(original, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+    # Resize ELA grayscale to match possibly downscaled original
     ela_gray = cv2.resize(ela_gray, (original.shape[1], original.shape[0]))
 
     # Edge detection with Sobel filter
@@ -953,6 +992,21 @@ def generate_ela():
         # Generate ELA image
         ela_image = convert_to_ela_image(file_path)
 
+        # Downscale ELA image if very large to reduce memory
+        try:
+            max_side = 1024
+            w, h = ela_image.size
+            if max(w, h) > max_side:
+                if w >= h:
+                    new_w = max_side
+                    new_h = int(h * (max_side / float(w)))
+                else:
+                    new_h = max_side
+                    new_w = int(w * (max_side / float(h)))
+                ela_image = ela_image.resize((new_w, new_h))
+        except Exception:
+            pass
+
         # Generate a unique filename for the ELA image
         timestamp = str(int(time.time()))
         ela_filename = f"ela_{timestamp}_{filename}"
@@ -1128,6 +1182,11 @@ def api_detect_forgery():
                     print(f"✅ File deleted: {filepath}")
                 except Exception as e:
                     print(f"❌ Error deleting file: {e}")
+            try:
+                del ela_image
+            except Exception:
+                pass
+            gc.collect()
 
 
 @app.route('/health')

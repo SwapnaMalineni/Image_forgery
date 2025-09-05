@@ -6,10 +6,10 @@ requests
 apscheduler
 pytz
 Pillow
-numpy
+numpy==1.24.3
 matplotlib
 opencv-python-headless
-tensorflow-cpu
+tensorflow-cpu==2.11.1
 gunicorn
 alembic
 SQLAlchemy
@@ -18,3 +18,4 @@ Flask-Bcrypt
 Flask-Mail
 itsdangerous
 fpdf
+gdown
