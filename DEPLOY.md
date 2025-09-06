@@ -35,3 +35,25 @@ Security notes
 
 Contact
 - If you want, I can add a small `render.yaml` for you or swap model download to `gdown`. Reply with which you prefer.
+
+Quick fix - Update the user loader to handle missing tables:
+
+```python
+# User loader for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return User.query.get(int(user_id))
+    except Exception as e:
+        print(f"Database error in load_user: {e}")
+        return None
+```
+
+To fix this immediately:
+
+1. **Push the updated files** (`init_db.py` and `start.sh`) I created
+2. **Clear build cache & deploy**
+3. **Check logs** for database initialization messages
+
+Alternative quick fix:
+- In Render Shell, run: `python -c "from app import app, db; app.app_context().push(); db.create_all(); print('DB created')"`
